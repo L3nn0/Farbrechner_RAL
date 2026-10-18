@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Farb- & Flächenrechner</title>
   
   <!-- PWA Meta Tags -->
@@ -27,7 +27,7 @@
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --radius: 12px;
-      --touch-size: 44px;
+      --touch-size: 42px;
     }
 
     * {
@@ -35,56 +35,75 @@
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
+      min-width: 0;
     }
 
-    body {
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.4;
-      padding-bottom: 90px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
     }
 
     /* Header */
     header {
       background: #1e293b;
       border-bottom: 1px solid var(--card-border);
-      padding: 12px 16px;
+      padding: 10px 12px;
       position: sticky;
       top: 0;
       z-index: 100;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      width: 100%;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-weight: 700;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .brand-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      flex-shrink: 0;
     }
 
     .header-actions {
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     /* Container */
     .container {
-      max-width: 900px;
+      width: 100%;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     /* Buttons */
@@ -92,24 +111,25 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       height: var(--touch-size);
-      padding: 0 16px;
-      font-size: 0.95rem;
+      padding: 0 12px;
+      font-size: 0.9rem;
       font-weight: 600;
-      border-radius: var(--radius);
+      border-radius: 10px;
       border: 1px solid transparent;
       cursor: pointer;
       transition: all 0.15s ease;
       color: white;
       white-space: nowrap;
       text-decoration: none;
+      user-select: none;
     }
 
     .btn-sm {
       height: 34px;
       padding: 0 10px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       border-radius: 8px;
     }
 
@@ -119,25 +139,27 @@
     .btn-success:active { background: #047857; }
     .btn-secondary { background: #334155; border-color: #475569; }
     .btn-secondary:active { background: #475569; }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); }
-    .btn-danger:active { background: rgba(239, 68, 68, 0.4); }
 
     /* Cards */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 16px;
+      padding: 14px;
+      width: 100%;
+      overflow: hidden;
     }
 
     .card-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       color: #e2e8f0;
+      flex-wrap: wrap;
     }
 
     /* Settings Toolbar */
@@ -145,6 +167,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+      width: 100%;
     }
 
     @media (max-width: 600px) {
@@ -157,31 +180,37 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      width: 100%;
     }
 
     .form-label {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-muted);
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      gap: 6px;
     }
 
     .input-row {
       display: flex;
       gap: 6px;
       align-items: center;
+      width: 100%;
     }
 
     .input-field {
+      flex: 1 1 80px;
       width: 100%;
-      height: var(--touch-size);
+      min-width: 0;
+      height: 40px;
       background: #0f172a;
       border: 1px solid var(--card-border);
       border-radius: 8px;
       color: white;
-      font-size: 1rem;
-      padding: 0 12px;
+      font-size: 0.95rem;
+      padding: 0 10px;
       outline: none;
     }
 
@@ -192,16 +221,17 @@
     .quick-chips {
       display: flex;
       gap: 4px;
+      flex-shrink: 0;
     }
 
     .chip {
-      height: var(--touch-size);
-      padding: 0 10px;
+      height: 40px;
+      padding: 0 9px;
       background: #334155;
       border: 1px solid #475569;
       border-radius: 8px;
       color: #cbd5e1;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
     }
@@ -215,7 +245,7 @@
     .project-bar {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .chips-scroller {
@@ -223,22 +253,24 @@
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
+      width: 100%;
+      -webkit-overflow-scrolling: touch;
       scrollbar-width: thin;
     }
 
     .project-chip {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
+      gap: 6px;
+      padding: 6px 12px;
       background: #0f172a;
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s;
+      flex-shrink: 0;
     }
 
     .project-chip.active {
@@ -249,28 +281,26 @@
     }
 
     .project-chip .chip-thumb {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 4px;
       object-fit: cover;
+      flex-shrink: 0;
     }
 
     .project-chip .close-chip {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: #94a3b8;
       cursor: pointer;
       padding: 0 2px;
-    }
-
-    .project-chip .close-chip:hover {
-      color: var(--danger);
     }
 
     /* KPI Grid */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
+      width: 100%;
     }
 
     @media (min-width: 640px) {
@@ -283,10 +313,10 @@
       background: #0f172a;
       border: 1px solid var(--card-border);
       border-radius: 10px;
-      padding: 12px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       position: relative;
       overflow: hidden;
     }
@@ -306,21 +336,22 @@
     .kpi-pixels::before { background: var(--amber); }
 
     .kpi-label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       color: var(--text-muted);
     }
 
     .kpi-val {
-      font-size: 1.35rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: white;
+      word-break: break-word;
     }
 
     .kpi-sub {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
     }
 
@@ -334,7 +365,7 @@
 
     .canvas-container {
       width: 100%;
-      max-height: 55vh;
+      max-height: 50vh;
       overflow: auto;
       border-radius: 8px;
       background: repeating-conic-gradient(#1e293b 0% 25%, #0f172a 0% 50%) 50% / 16px 16px;
@@ -342,8 +373,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 8px;
-      position: relative;
+      padding: 6px;
     }
 
     canvas {
@@ -353,11 +383,10 @@
       image-rendering: pixelated;
       cursor: crosshair;
       border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     .canvas-hint {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       text-align: center;
     }
@@ -368,11 +397,13 @@
       background: rgba(59, 130, 246, 0.2);
       border: 1px solid var(--primary);
       border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 0.85rem;
+      padding: 8px 10px;
+      font-size: 0.82rem;
       color: #bfdbfe;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     /* Color Table & List */
@@ -384,8 +415,8 @@
       margin-bottom: 8px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      transition: all 0.15s;
+      gap: 8px;
+      width: 100%;
     }
 
     .color-card.active-highlight {
@@ -397,38 +428,39 @@
     .color-header-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      width: 100%;
     }
 
     .color-swatch {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.25);
       flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
       cursor: pointer;
+      overflow: hidden;
     }
 
     .hex-badge {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
       color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      flex-shrink: 0;
     }
 
     .ral-input {
-      flex: 1;
-      height: 38px;
+      flex: 1 1 auto;
+      width: 100%;
+      min-width: 0;
+      height: 36px;
       background: #1e293b;
       border: 1px solid var(--card-border);
       border-radius: 6px;
       color: #f8fafc;
       padding: 0 10px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       outline: none;
     }
 
@@ -439,56 +471,85 @@
 
     .metrics-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      font-size: 0.82rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      font-size: 0.8rem;
       background: rgba(255, 255, 255, 0.03);
       padding: 8px;
       border-radius: 6px;
+      width: 100%;
     }
 
     .metric-col {
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .metric-label {
       color: var(--text-muted);
-      font-size: 0.72rem;
+      font-size: 0.68rem;
+      font-weight: 600;
     }
 
     .metric-val {
       font-weight: 700;
       color: #e2e8f0;
+      font-size: 0.82rem;
+      word-break: break-word;
     }
 
     .color-actions {
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      width: 100%;
     }
 
-    /* Fixed Bottom Action Bar */
+    /* Fixed Bottom Action Bar - Responsive for narrow phones */
     .bottom-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
+      width: 100%;
+      max-width: 100vw;
       background: #1e293b;
       border-top: 1px solid var(--card-border);
-      padding: 10px 16px;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px;
       display: flex;
       justify-content: center;
-      gap: 8px;
       z-index: 100;
       box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
     }
 
     .bottom-bar-inner {
       width: 100%;
-      max-width: 900px;
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
+      max-width: 860px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 6px;
+    }
+
+    .bottom-bar-inner .btn {
+      width: 100%;
+      min-width: 0;
+      padding: 0 6px;
+      font-size: 0.82rem;
+      height: 40px;
+    }
+
+    @media (max-width: 380px) {
+      .brand span {
+        font-size: 0.92rem;
+      }
+      .header-actions .btn-sm {
+        padding: 0 7px;
+        font-size: 0.75rem;
+      }
+      .bottom-bar-inner .btn {
+        font-size: 0.76rem;
+        padding: 0 4px;
+      }
     }
 
     /* Modals & Dialogs */
@@ -498,7 +559,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
@@ -515,8 +576,8 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 20px;
-      max-width: 480px;
+      padding: 18px;
+      max-width: 460px;
       width: 100%;
       max-height: 85vh;
       overflow-y: auto;
@@ -525,297 +586,357 @@
     /* Toast */
     #toast {
       position: fixed;
-      top: 70px;
+      top: 64px;
       left: 50%;
       transform: translateX(-50%);
       background: #1e293b;
       border: 1px solid var(--primary);
       color: white;
-      padding: 10px 18px;
+      padding: 8px 16px;
       border-radius: 30px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
       z-index: 300;
       display: none;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
+      max-width: 90vw;
+      text-align: center;
     }
 
     /* Empty state */
     .empty-placeholder {
       text-align: center;
-      padding: 40px 16px;
+      padding: 32px 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       border: 2px dashed var(--card-border);
       border-radius: var(--radius);
     }
 
     .empty-icon {
-      font-size: 3rem;
+      font-size: 2.6rem;
     }
 
-    /* PRINT STYLESHEET */
-    @media print {
-      body {
-        background: white !important;
-        color: black !important;
-        padding-bottom: 0;
-      }
-
-      header, .bottom-bar, .settings-grid, .project-bar, .btn, .canvas-hint, .highlight-active-banner, #toast, .modal-overlay {
-        display: none !important;
-      }
-
-      .container {
-        padding: 0;
-        max-width: 100%;
-      }
-
-      .card {
-        background: white !important;
-        border: 1px solid #ddd !important;
-        color: black !important;
-        page-break-inside: avoid;
-        box-shadow: none !important;
-        margin-bottom: 15px;
-      }
-
-      .kpi-card {
-        background: white !important;
-        border: 1px solid #ccc !important;
-        color: black !important;
-      }
-
-      .kpi-val, .card-title, .metric-val, .hex-badge {
-        color: black !important;
-      }
-
-      .color-card {
-        background: white !important;
-        border: 1px solid #ddd !important;
-        color: black !important;
-        page-break-inside: avoid;
-      }
-
-      .color-actions {
-        display: none !important;
-      }
-
-      .ral-input {
-        background: white !important;
-        color: black !important;
-        border: none !important;
-        font-weight: bold;
-      }
-
-      .canvas-container {
-        background: white !important;
-        border: none !important;
-      }
-
-      .print-header {
-        display: block !important;
-        margin-bottom: 20px;
-        border-bottom: 2px solid #000;
-        padding-bottom: 10px;
-      }
-    }
-
-    .print-header {
+    /* ====================================================================
+       DEDICATED PRINT REPORT (Hidden on screen, ONLY thing shown on print)
+       ==================================================================== */
+    #printReportContainer {
       display: none;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        overflow: visible !important;
+        height: auto !important;
+      }
+
+      /* Hide entire interactive UI when printing */
+      .app-shell,
+      header,
+      .bottom-bar,
+      #toast,
+      .modal-overlay {
+        display: none !important;
+      }
+
+      /* Show ONLY our clean generated print report */
+      #printReportContainer {
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #ffffff !important;
+        color: #111827 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      }
+
+      .print-page-section {
+        page-break-inside: avoid;
+        margin-bottom: 24px;
+      }
+
+      .print-page-break {
+        page-break-before: always;
+      }
+
+      .print-title {
+        font-size: 18pt;
+        font-weight: 800;
+        color: #0f172a;
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+      }
+
+      .print-meta {
+        font-size: 9.5pt;
+        color: #475569;
+        margin-bottom: 14px;
+      }
+
+      .print-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .print-kpi-box {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: #f8fafc !important;
+      }
+
+      .print-kpi-box .pk-label {
+        font-size: 7.5pt;
+        text-transform: uppercase;
+        color: #64748b;
+        font-weight: 700;
+      }
+
+      .print-kpi-box .pk-val {
+        font-size: 12pt;
+        font-weight: 800;
+        color: #0f172a;
+      }
+
+      .print-preview-img {
+        max-width: 100%;
+        max-height: 220px;
+        object-fit: contain;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        margin: 8px auto 14px auto;
+        display: block;
+      }
+
+      .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 9.5pt;
+        margin-bottom: 16px;
+      }
+
+      .print-table th {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        text-align: left;
+        padding: 7px 8px;
+        border: 1px solid #cbd5e1;
+        font-weight: 700;
+      }
+
+      .print-table td {
+        padding: 6px 8px;
+        border: 1px solid #cbd5e1;
+        vertical-align: middle;
+        color: #0f172a !important;
+      }
+
+      .print-swatch-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Printable Header -->
-  <div class="print-header">
-    <h1 style="font-size: 1.6rem; font-weight: 800;">Farb- & Flächenberechnung – Projektbericht</h1>
-    <p id="printMeta" style="font-size: 0.9rem; color: #555; margin-top: 4px;"></p>
-  </div>
+  <!-- Dedicated Print Report Container (populated dynamically for clean printing) -->
+  <div id="printReportContainer"></div>
 
-  <!-- Header -->
-  <header>
-    <div class="brand">
-      <img src="icon-192.png" alt="Icon" class="brand-icon">
-      <span>Farbrechner</span>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-secondary btn-sm" id="btnHelp" title="PWA / Home-Bildschirm">📱 App-Info</button>
-      <button class="btn btn-secondary btn-sm" id="btnSaveProj" title="Projekt speichern">💾 Speichern</button>
-      <button class="btn btn-secondary btn-sm" id="btnLoadProj" title="Projekt laden">📂 Laden</button>
-      <input type="file" id="loadProjInput" accept=".json,.farbprojekt.json" style="display:none">
-    </div>
-  </header>
-
-  <main class="container">
-
-    <!-- Settings Card -->
-    <section class="card">
-      <div class="card-title">
-        <span>⚙️ Einstellungen & Skalierung</span>
-        <button class="btn btn-sm btn-secondary" id="btnResetProject" style="font-size:0.75rem">Neu starten</button>
+  <!-- Interactive App Shell -->
+  <div class="app-shell">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <img src="icon-192.png" alt="Icon" class="brand-icon">
+        <span>Farbrechner</span>
       </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" id="btnHelp" title="Als App installieren">📱 App</button>
+        <button class="btn btn-secondary btn-sm" id="btnSaveProj" title="Projekt speichern">💾 Speichern</button>
+        <button class="btn btn-secondary btn-sm" id="btnLoadProj" title="Projekt laden">📂 Laden</button>
+        <input type="file" id="loadProjInput" accept=".json,.farbprojekt.json" style="display:none">
+      </div>
+    </header>
 
-      <div class="settings-grid">
-        <div class="form-group">
-          <label class="form-label">
-            <span>Maßstab: Pixel pro Meter</span>
-            <span id="scaleLabel" style="color:var(--primary); font-weight:700;">100 Px/m</span>
-          </label>
-          <div class="input-row">
-            <input type="number" id="inputScale" class="input-field" value="100" min="1" step="1">
-            <div class="quick-chips">
-              <button class="chip" data-scale="50">50</button>
-              <button class="chip" data-scale="100">100</button>
-              <button class="chip" data-scale="200">200</button>
+    <main class="container">
+
+      <!-- Settings Card -->
+      <section class="card">
+        <div class="card-title">
+          <span>⚙️ Einstellungen & Skalierung</span>
+          <button class="btn btn-sm btn-secondary" id="btnResetProject" style="font-size:0.75rem; height:28px;">Neu starten</button>
+        </div>
+
+        <div class="settings-grid">
+          <div class="form-group">
+            <label class="form-label">
+              <span>Maßstab (Pixel = 1 Meter)</span>
+              <span id="scaleLabel" style="color:var(--primary); font-weight:700;">100 Px/m</span>
+            </label>
+            <div class="input-row">
+              <input type="number" id="inputScale" class="input-field" value="100" min="1" step="1">
+              <div class="quick-chips">
+                <button class="chip" data-scale="50">50</button>
+                <button class="chip" data-scale="100">100</button>
+                <button class="chip" data-scale="200">200</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span>Farbverbrauch (Liter / m²)</span>
+              <span id="litersLabel" style="color:var(--primary); font-weight:700;">0,150 L/m²</span>
+            </label>
+            <div class="input-row">
+              <input type="number" id="inputLiters" class="input-field" value="0.150" min="0.001" step="0.005">
+              <div class="quick-chips">
+                <button class="chip" data-liters="0.100">0,10</button>
+                <button class="chip" data-liters="0.150">0,15</button>
+                <button class="chip" data-liters="0.200">0,20</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">
-            <span>Farbverbrauch (Liter / m²)</span>
-            <span id="litersLabel" style="color:var(--primary); font-weight:700;">0,150 L/m²</span>
-          </label>
-          <div class="input-row">
-            <input type="number" id="inputLiters" class="input-field" value="0.150" min="0.001" step="0.005">
-            <div class="quick-chips">
-              <button class="chip" data-liters="0.100">0.10</button>
-              <button class="chip" data-liters="0.150">0.15</button>
-              <button class="chip" data-liters="0.200">0.20</button>
-            </div>
-          </div>
+        <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted);">
+          <input type="checkbox" id="checkIgnoreTrans" checked style="width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--primary);">
+          <label for="checkIgnoreTrans" style="cursor: pointer;">Vollständig transparente Pixel (Alpha = 0) ignorieren</label>
         </div>
-      </div>
+      </section>
 
-      <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted);">
-        <input type="checkbox" id="checkIgnoreTrans" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
-        <label for="checkIgnoreTrans" style="cursor: pointer;">Vollständig transparente Pixel (Alpha = 0) ignorieren</label>
-      </div>
-    </section>
-
-    <!-- Multi-Image Project Management -->
-    <section class="card project-bar">
-      <div class="card-title">
-        <span>🖼️ Projektbilder</span>
-        <button class="btn btn-primary btn-sm" id="btnAddImages">
-          ➕ Bilder hinzufügen
-        </button>
-        <input type="file" id="filePicker" accept="image/*" multiple style="display:none">
-      </div>
-
-      <div class="chips-scroller" id="projectChips">
-        <!-- Rendered chips -->
-      </div>
-    </section>
-
-    <!-- KPI Summary Grid -->
-    <section class="kpi-grid">
-      <div class="kpi-card kpi-sqm">
-        <span class="kpi-label">Fläche Gesamt</span>
-        <span class="kpi-val" id="kpiSqm">0,00 m²</span>
-        <span class="kpi-sub" id="kpiSqmSub">100 Px = 1 m</span>
-      </div>
-
-      <div class="kpi-card kpi-liters">
-        <span class="kpi-label">Farbmenge Gesamt</span>
-        <span class="kpi-val" id="kpiLiters">0,000 L</span>
-        <span class="kpi-sub" id="kpiLitersSub">bei 0,150 L/m²</span>
-      </div>
-
-      <div class="kpi-card kpi-colors">
-        <span class="kpi-label">Farben</span>
-        <span class="kpi-val" id="kpiColors">0</span>
-        <span class="kpi-sub">Erkannte Töne</span>
-      </div>
-
-      <div class="kpi-card kpi-pixels">
-        <span class="kpi-label">Pixel gezählt</span>
-        <span class="kpi-val" id="kpiPixels">0</span>
-        <span class="kpi-sub" id="kpiRes">0 × 0 Px</span>
-      </div>
-    </section>
-
-    <!-- Canvas Preview -->
-    <section class="card preview-box" id="previewSection">
-      <div class="highlight-active-banner" id="highlightBanner">
-        <span id="highlightText">🎯 Hervorgehoben: #FFFFFF</span>
-        <button class="btn btn-sm btn-secondary" id="btnClearHighlight" style="height:28px; padding:0 8px;">✕ Beenden</button>
-      </div>
-
-      <div class="canvas-container">
-        <canvas id="previewCanvas"></canvas>
-      </div>
-      <div class="canvas-hint">
-        💡 <strong>Tipp:</strong> Tippe auf einen Bereich im Bild, um die Farbe direkt auszuwählen (Pipette).
-      </div>
-    </section>
-
-    <!-- Color Breakdown Cards -->
-    <section class="card">
-      <div class="card-title">
-        <span>🎨 Erkannte Farben & RAL-Zuordnung</span>
-        <span id="colorCountBadge" style="font-size:0.85rem; color:var(--text-muted);"></span>
-      </div>
-
-      <div id="colorsContainer">
-        <!-- Empty state or list of colors -->
-        <div class="empty-placeholder" id="emptyPlaceholder">
-          <div class="empty-icon">🖼️</div>
-          <div>
-            <strong>Noch kein Bild geladen</strong>
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">
-              Füge ein oder mehrere Bilder hinzu, um die Farben und Quadratmeter exakt zu analysieren.
-            </p>
-          </div>
-          <button class="btn btn-primary" onclick="document.getElementById('filePicker').click()">
-            📷 Foto aufnehmen / Bild wählen
+      <!-- Multi-Image Project Management -->
+      <section class="card project-bar">
+        <div class="card-title" style="margin-bottom: 4px;">
+          <span>🖼️ Projektbilder</span>
+          <button class="btn btn-primary btn-sm" id="btnAddImages">
+            ➕ Bilder hinzufügen
           </button>
+          <input type="file" id="filePicker" accept="image/*" multiple style="display:none">
         </div>
+
+        <div class="chips-scroller" id="projectChips"></div>
+      </section>
+
+      <!-- KPI Summary Grid -->
+      <section class="kpi-grid">
+        <div class="kpi-card kpi-sqm">
+          <span class="kpi-label">Fläche Gesamt</span>
+          <span class="kpi-val" id="kpiSqm">0,00 m²</span>
+          <span class="kpi-sub" id="kpiSqmSub">100 Px = 1 m</span>
+        </div>
+
+        <div class="kpi-card kpi-liters">
+          <span class="kpi-label">Farbmenge Gesamt</span>
+          <span class="kpi-val" id="kpiLiters">0,000 L</span>
+          <span class="kpi-sub" id="kpiLitersSub">bei 0,150 L/m²</span>
+        </div>
+
+        <div class="kpi-card kpi-colors">
+          <span class="kpi-label">Farben</span>
+          <span class="kpi-val" id="kpiColors">0</span>
+          <span class="kpi-sub">Erkannte Töne</span>
+        </div>
+
+        <div class="kpi-card kpi-pixels">
+          <span class="kpi-label">Pixel gezählt</span>
+          <span class="kpi-val" id="kpiPixels">0</span>
+          <span class="kpi-sub" id="kpiRes">0 × 0 Px</span>
+        </div>
+      </section>
+
+      <!-- Canvas Preview -->
+      <section class="card preview-box" id="previewSection">
+        <div class="highlight-active-banner" id="highlightBanner">
+          <span id="highlightText">🎯 Hervorgehoben: #FFFFFF</span>
+          <button class="btn btn-sm btn-secondary" id="btnClearHighlight" style="height:26px; padding:0 8px;">✕ Aufheben</button>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="previewCanvas"></canvas>
+        </div>
+        <div class="canvas-hint">
+          💡 <strong>Pipette:</strong> Tippe im Bild auf eine Farbe, um sie unten zu markieren.
+        </div>
+      </section>
+
+      <!-- Color Breakdown Cards -->
+      <section class="card">
+        <div class="card-title">
+          <span>🎨 Erkannte Farben & RAL-Zuordnung</span>
+          <span id="colorCountBadge" style="font-size:0.8rem; color:var(--text-muted);"></span>
+        </div>
+
+        <div id="colorsContainer">
+          <div class="empty-placeholder" id="emptyPlaceholder">
+            <div class="empty-icon">🖼️</div>
+            <div>
+              <strong>Noch kein Bild geladen</strong>
+              <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">
+                Füge ein oder mehrere Bilder hinzu, um Farben, Quadratmeter und Liter exakt zu berechnen.
+              </p>
+            </div>
+            <button class="btn btn-primary" onclick="document.getElementById('filePicker').click()">
+              📷 Foto aufnehmen / Bild wählen
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Sticky Bottom Action Bar -->
+    <footer class="bottom-bar">
+      <div class="bottom-bar-inner">
+        <button class="btn btn-secondary" id="btnExportCsv">
+          📊 CSV
+        </button>
+        <button class="btn btn-secondary" id="btnExportZip">
+          📦 Ebenen (ZIP)
+        </button>
+        <button class="btn btn-success" id="btnPrint">
+          🖨️ Drucken / PDF
+        </button>
       </div>
-    </section>
-
-  </main>
-
-  <!-- Sticky Bottom Action Bar -->
-  <footer class="bottom-bar">
-    <div class="bottom-bar-inner">
-      <button class="btn btn-secondary" id="btnExportCsv" style="flex:1;">
-        📊 CSV
-      </button>
-      <button class="btn btn-secondary" id="btnExportZip" style="flex:1;">
-        📦 Ebenen (ZIP)
-      </button>
-      <button class="btn btn-success" id="btnPrint" style="flex:1.2;">
-        🖨️ Drucken / PDF
-      </button>
-    </div>
-  </footer>
+    </footer>
+  </div>
 
   <!-- Help / PWA Modal -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
-      <h3 style="margin-bottom:12px; font-size:1.15rem;">📱 Als Handy-App verwenden</h3>
-      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:16px;">
-        Du kannst diesen Farbrechner wie eine native App ohne App-Store auf deinem Smartphone speichern:
+      <h3 style="margin-bottom:12px; font-size:1.1rem;">📱 Als Handy-App installieren</h3>
+      <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:14px;">
+        So legst du den Farbrechner als echtes App-Symbol auf deinen Startbildschirm:
       </p>
       
-      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:12px; font-size:0.88rem;">
+      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:10px; font-size:0.85rem;">
         <strong style="color:var(--primary);">🍏 iPhone / iPad (Safari):</strong>
-        <ol style="margin-left: 20px; margin-top: 6px;">
-          <li>Tippe unten auf das <strong>Teilen-Symbol (Viereck mit Pfeil nach oben)</strong>.</li>
-          <li>Scrolle etwas herunter und wähle <strong>„Zum Home-Bildschirm“</strong>.</li>
+        <ol style="margin-left: 18px; margin-top: 6px;">
+          <li>Tippe unten auf <strong>Teilen (Viereck mit Pfeil nach oben)</strong>.</li>
+          <li>Wähle <strong>„Zum Home-Bildschirm“</strong>.</li>
           <li>Tippe oben rechts auf <strong>„Hinzufügen“</strong>.</li>
         </ol>
       </div>
 
-      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:16px; font-size:0.88rem;">
+      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:14px; font-size:0.85rem;">
         <strong style="color:var(--success);">🤖 Android (Chrome / Edge):</strong>
-        <ol style="margin-left: 20px; margin-top: 6px;">
-          <li>Tippe oben rechts auf das <strong>Drei-Punkte-Menü (⋮)</strong>.</li>
+        <ol style="margin-left: 18px; margin-top: 6px;">
+          <li>Tippe oben rechts auf das <strong>Menü (⋮)</strong>.</li>
           <li>Wähle <strong>„App installieren“</strong> oder <strong>„Zum Startbildschirm hinzufügen“</strong>.</li>
         </ol>
       </div>
@@ -833,7 +954,6 @@
        1. STORAGE & STATE MANAGEMENT
        ==================================================================== */
     const STORAGE_KEY_RAL = 'farbrechner_ral_mappings';
-    const STORAGE_KEY_SETTINGS = 'farbrechner_settings';
 
     function loadRalMappings() {
       try {
@@ -853,14 +973,13 @@
       localStorage.setItem(STORAGE_KEY_RAL, JSON.stringify(mappings));
     }
 
-    // App State
     const state = {
-      scale: 100,            // Pixels per meter
-      litersPerSqm: 0.150,   // Liters per square meter
+      scale: 100,
+      litersPerSqm: 0.150,
       ignoreTransparent: true,
-      images: [],            // Array of { id, name, width, height, canvas, colors: [] }
-      selectedView: 'combined', // 'combined' or image id
-      activeHighlightHex: null // Currently highlighted hex color, or null
+      images: [],
+      selectedView: 'combined',
+      activeHighlightHex: null
     };
 
     /* ====================================================================
@@ -880,13 +999,12 @@
       };
     }
 
-    // Analyze a canvas element for exact color pixel counts
     function analyzeCanvas(canvas, ignoreTransparent) {
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const data = imgData.data;
 
-      const colorMap = new Map(); // key: hex, val: { hex, rgb, count }
+      const colorMap = new Map();
       let transparentCount = 0;
       let countedPixels = 0;
 
@@ -927,7 +1045,6 @@
       };
     }
 
-    // Aggregate colors across all images in the project
     function getCombinedAnalysis() {
       if (state.images.length === 0) {
         return {
@@ -983,6 +1100,7 @@
       renderProjectChips();
       renderKPIsAndTable();
       renderCanvas();
+      buildPrintReport();
     }
 
     function renderProjectChips() {
@@ -994,7 +1112,6 @@
       }
       projectChips.style.display = 'flex';
 
-      // Combined project chip
       const combinedChip = document.createElement('div');
       combinedChip.className = `project-chip ${state.selectedView === 'combined' ? 'active' : ''}`;
       combinedChip.innerHTML = `<span>∑ Gesamt-Projekt (${state.images.length})</span>`;
@@ -1004,12 +1121,10 @@
       };
       projectChips.appendChild(combinedChip);
 
-      // Single image chips
       state.images.forEach((img, idx) => {
         const chip = document.createElement('div');
         chip.className = `project-chip ${state.selectedView === img.id ? 'active' : ''}`;
         
-        // Create small thumbnail
         const thumbCanvas = document.createElement('canvas');
         thumbCanvas.width = 32;
         thumbCanvas.height = 32;
@@ -1050,6 +1165,8 @@
         document.getElementById('kpiPixels').textContent = '0';
         document.getElementById('kpiRes').textContent = '0 × 0 Px';
         document.getElementById('colorCountBadge').textContent = '';
+        colorsContainer.innerHTML = '';
+        colorsContainer.appendChild(emptyPlaceholder);
         return;
       }
 
@@ -1060,26 +1177,20 @@
       const totalAreaSqm = activeAnalysis.countedPixels / sqPixelsPerSqm;
       const totalLiters = totalAreaSqm * state.litersPerSqm;
 
-      // Update KPI Cards
       document.getElementById('kpiSqm').textContent = totalAreaSqm.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' m²';
       document.getElementById('kpiLiters').textContent = totalLiters.toLocaleString('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' L';
       document.getElementById('kpiColors').textContent = activeAnalysis.colors.length;
-      document.getElementById('kpiPixels').textContent = activeAnalysis.countedPixels.toLocaleString('de-DE') + ' Px';
+      document.getElementById('kpiPixels').textContent = activeAnalysis.countedPixels.toLocaleString('de-DE');
 
       if (state.selectedView === 'combined') {
-        document.getElementById('kpiRes').textContent = `${state.images.length} Bilder summiert`;
-        document.getElementById('colorCountBadge').textContent = `Projekt-Zusammenfassung (${activeAnalysis.colors.length} Farben)`;
+        document.getElementById('kpiRes').textContent = `${state.images.length} Bild(er) summiert`;
+        document.getElementById('colorCountBadge').textContent = `Gesamt (${activeAnalysis.colors.length} Farben)`;
       } else {
         const curImg = state.images.find(img => img.id === state.selectedView);
         document.getElementById('kpiRes').textContent = `${curImg.width} × ${curImg.height} Px`;
-        document.getElementById('colorCountBadge').textContent = `${curImg.name} (${activeAnalysis.colors.length} Farben)`;
+        document.getElementById('colorCountBadge').textContent = `${curImg.name} (${activeAnalysis.colors.length})`;
       }
 
-      // Update Print Metadata
-      document.getElementById('printMeta').textContent = 
-        `Erstellt am: ${new Date().toLocaleString('de-DE')} | Maßstab: ${state.scale} Px/m | Farbverbrauch: ${state.litersPerSqm.toFixed(3)} L/m² | Projekt: ${state.selectedView === 'combined' ? 'Gesamtprojekt' : state.images.find(img => img.id === state.selectedView).name}`;
-
-      // Render Color List / Cards
       let html = '';
       activeAnalysis.colors.forEach((c) => {
         const percentage = activeAnalysis.countedPixels > 0 
@@ -1089,20 +1200,23 @@
         const liters = sqm * state.litersPerSqm;
         const isActive = state.activeHighlightHex === c.hex;
 
+        // SVG fill inside swatch ensures color renders in every mode
         html += `
           <div class="color-card ${isActive ? 'active-highlight' : ''}" data-hex="${c.hex}" id="card-${c.hex.replace('#','')}">
             <div class="color-header-row">
-              <div class="color-swatch" style="background-color: ${c.hex};" onclick="toggleHighlight('${c.hex}')" title="Klicken zum Hervorheben"></div>
-              <div class="hex-badge">
-                <span>${c.hex}</span>
+              <div class="color-swatch" onclick="toggleHighlight('${c.hex}')" title="Antippen zum Hervorheben">
+                <svg width="100%" height="100%" viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="34" height="34" fill="${c.hex}" />
+                </svg>
               </div>
-              <input type="text" class="ral-input" placeholder="RAL-Ton (z.B. 5002)..." value="${escapeHtml(c.ral || '')}" onchange="updateRal('${c.hex}', this.value)">
+              <div class="hex-badge">${c.hex}</div>
+              <input type="text" class="ral-input" placeholder="RAL-Ton eintragen..." value="${escapeHtml(c.ral || '')}" onchange="updateRal('${c.hex}', this.value)">
             </div>
 
             <div class="metrics-row">
               <div class="metric-col">
                 <span class="metric-label">PIXEL / ANTEIL</span>
-                <span class="metric-val">${c.count.toLocaleString('de-DE')} Px <span style="font-size:0.75rem; color:var(--text-muted);">(${percentage.toFixed(1)}%)</span></span>
+                <span class="metric-val">${c.count.toLocaleString('de-DE')} <span style="font-size:0.72rem; color:var(--text-muted);">(${percentage.toFixed(1)}%)</span></span>
               </div>
               <div class="metric-col">
                 <span class="metric-label">FLÄCHE</span>
@@ -1118,7 +1232,7 @@
               <button class="btn btn-sm ${isActive ? 'btn-primary' : 'btn-secondary'}" style="flex:1;" onclick="toggleHighlight('${c.hex}')">
                 ${isActive ? '✓ Hervorgehoben' : '🎯 Hervorheben'}
               </button>
-              <button class="btn btn-sm btn-secondary" onclick="downloadSingleLayer('${c.hex}', '${escapeHtml(c.ral || '')}')" title="Diese Farbe als transparentes PNG herunterladen">
+              <button class="btn btn-sm btn-secondary" onclick="downloadSingleLayer('${c.hex}', '${escapeHtml(c.ral || '')}')" title="Farbe als transparentes PNG speichern">
                 💾 PNG
               </button>
             </div>
@@ -1134,7 +1248,6 @@
 
       let sourceCanvas;
       if (state.selectedView === 'combined') {
-        // Create a collage canvas of all images
         sourceCanvas = createCollageCanvas();
       } else {
         const curImg = state.images.find(img => img.id === state.selectedView);
@@ -1147,14 +1260,12 @@
       previewCanvas.height = sourceCanvas.height;
 
       if (!state.activeHighlightHex) {
-        // Normal draw
         previewCtx.drawImage(sourceCanvas, 0, 0);
         highlightBanner.style.display = 'none';
       } else {
-        // Highlight active hex
         highlightBanner.style.display = 'flex';
         const ral = loadRalMappings()[state.activeHighlightHex] || '';
-        highlightText.innerHTML = `🎯 <strong>Hervorgehoben:</strong> <span style="display:inline-block; width:12px; height:12px; background:${state.activeHighlightHex}; border-radius:3px; vertical-align:middle;"></span> ${state.activeHighlightHex} ${ral ? '(' + escapeHtml(ral) + ')' : ''}`;
+        highlightText.innerHTML = `🎯 <strong>Aktiv:</strong> <svg width="12" height="12" style="vertical-align:middle; border-radius:2px;"><rect width="12" height="12" fill="${state.activeHighlightHex}"/></svg> ${state.activeHighlightHex} ${ral ? '(' + escapeHtml(ral) + ')' : ''}`;
 
         const srcCtx = sourceCanvas.getContext('2d');
         const imgData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
@@ -1170,10 +1281,7 @@
           const g = data[i + 1];
           const b = data[i + 2];
 
-          if (r === targetRgb.r && g === targetRgb.g && b === targetRgb.b) {
-            // Keep full bright original color
-          } else {
-            // Dim non-matching pixels to 15% opacity
+          if (r !== targetRgb.r || g !== targetRgb.g || b !== targetRgb.b) {
             data[i + 3] = Math.max(25, Math.floor(a * 0.18));
           }
         }
@@ -1221,7 +1329,136 @@
     }
 
     /* ====================================================================
-       4. INTERACTION & EVENT HANDLERS
+       4. DEDICATED PRINT / PDF REPORT BUILDER
+       ==================================================================== */
+    function buildPrintSectionHtml(title, subtitle, analysis, imgDataUrl, isPageBreak) {
+      const sqPixelsPerSqm = state.scale * state.scale;
+      const totalAreaSqm = analysis.countedPixels / sqPixelsPerSqm;
+      const totalLiters = totalAreaSqm * state.litersPerSqm;
+
+      let rowsHtml = '';
+      analysis.colors.forEach((c, idx) => {
+        const percentage = analysis.countedPixels > 0 ? (c.count / analysis.countedPixels * 100) : 0;
+        const sqm = c.count / sqPixelsPerSqm;
+        const liters = sqm * state.litersPerSqm;
+
+        // Inline SVG rect guarantees that printers and mobile PDF generators ALWAYS render the exact color!
+        rowsHtml += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>
+              <div class="print-swatch-cell">
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                  <rect x="0.5" y="0.5" width="23" height="23" rx="4" fill="${c.hex}" stroke="#334155" stroke-width="1"/>
+                </svg>
+                <strong style="font-family:monospace;">${c.hex}</strong>
+              </div>
+            </td>
+            <td><strong>${escapeHtml(c.ral || '—')}</strong></td>
+            <td style="text-align:right;">${c.count.toLocaleString('de-DE')}</td>
+            <td style="text-align:right;">${percentage.toFixed(2).replace('.', ',')} %</td>
+            <td style="text-align:right; font-weight:700;">${sqm.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²</td>
+            <td style="text-align:right; font-weight:700;">${liters.toLocaleString('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} L</td>
+          </tr>
+        `;
+      });
+
+      return `
+        <div class="print-page-section ${isPageBreak ? 'print-page-break' : ''}">
+          <div class="print-title">${escapeHtml(title)}</div>
+          <div class="print-meta">${escapeHtml(subtitle)}</div>
+
+          <div class="print-kpi-row">
+            <div class="print-kpi-box">
+              <div class="pk-label">Fläche Gesamt</div>
+              <div class="pk-val">${totalAreaSqm.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²</div>
+            </div>
+            <div class="print-kpi-box">
+              <div class="pk-label">Farbmenge Gesamt</div>
+              <div class="pk-val">${totalLiters.toLocaleString('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} L</div>
+            </div>
+            <div class="print-kpi-box">
+              <div class="pk-label">Erkannte Farben</div>
+              <div class="pk-val">${analysis.colors.length}</div>
+            </div>
+            <div class="print-kpi-box">
+              <div class="pk-label">Gezählte Pixel</div>
+              <div class="pk-val">${analysis.countedPixels.toLocaleString('de-DE')}</div>
+            </div>
+          </div>
+
+          ${imgDataUrl ? `<img src="${imgDataUrl}" class="print-preview-img" alt="Vorschau">` : ''}
+
+          <table class="print-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">#</th>
+                <th>Farbe / Hex</th>
+                <th>RAL-Ton</th>
+                <th style="text-align:right;">Pixel</th>
+                <th style="text-align:right;">Anteil</th>
+                <th style="text-align:right;">Fläche (m²)</th>
+                <th style="text-align:right;">Farbmenge (Liter)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function buildPrintReport() {
+      const container = document.getElementById('printReportContainer');
+      if (state.images.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      const dateStr = new Date().toLocaleString('de-DE');
+      const commonMeta = `Stand: ${dateStr} | Maßstab: ${state.scale} Px = 1 m | Farbverbrauch: ${state.litersPerSqm.toFixed(3).replace('.', ',')} L/m²`;
+
+      let fullReportHtml = '';
+
+      if (state.images.length === 1) {
+        const single = state.images[0];
+        fullReportHtml += buildPrintSectionHtml(
+          `Farb- & Flächenberechnung: ${single.name}`,
+          `${commonMeta} | Bildgröße: ${single.width} × ${single.height} Px`,
+          single.analysis,
+          single.canvas.toDataURL('image/png'),
+          false
+        );
+      } else {
+        // 1. Combined summary page
+        const combined = getCombinedAnalysis();
+        const collageUrl = createCollageCanvas().toDataURL('image/png');
+        fullReportHtml += buildPrintSectionHtml(
+          `∑ GESAMT-PROJEKT (${state.images.length} Bilder kombiniert)`,
+          commonMeta,
+          combined,
+          collageUrl,
+          false
+        );
+
+        // 2. Individual image breakdowns
+        state.images.forEach((img, idx) => {
+          fullReportHtml += buildPrintSectionHtml(
+            `Teilbild ${idx + 1}: ${img.name}`,
+            `${commonMeta} | Bildgröße: ${img.width} × ${img.height} Px`,
+            img.analysis,
+            img.canvas.toDataURL('image/png'),
+            true
+          );
+        });
+      }
+
+      container.innerHTML = fullReportHtml;
+    }
+
+    /* ====================================================================
+       5. INTERACTION & EVENT HANDLERS
        ==================================================================== */
     function toggleHighlight(hex) {
       if (state.activeHighlightHex === hex) {
@@ -1229,13 +1466,14 @@
       } else {
         state.activeHighlightHex = hex;
         showToast(`Hervorgehoben: ${hex}`);
-        // Scroll card into view
         const card = document.getElementById('card-' + hex.replace('#', ''));
         if (card) {
           card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }
-      renderAll();
+      renderProjectChips();
+      renderKPIsAndTable();
+      renderCanvas();
     }
 
     document.getElementById('btnClearHighlight').onclick = () => {
@@ -1245,17 +1483,15 @@
 
     function updateRal(hex, ralName) {
       saveRalMapping(hex, ralName);
-      // Update in loaded analysis
       state.images.forEach(img => {
         img.analysis.colors.forEach(c => {
           if (c.hex === hex) c.ral = ralName.trim();
         });
       });
-      showToast(`RAL gespeichert: ${hex} → ${ralName || 'Kein'}`);
+      showToast(`RAL gespeichert: ${hex} → ${ralName || 'Leer'}`);
       renderAll();
     }
 
-    // Touch / Click pipette on canvas
     previewCanvas.addEventListener('click', (e) => {
       if (state.images.length === 0) return;
 
@@ -1268,12 +1504,11 @@
 
       if (x < 0 || x >= previewCanvas.width || y < 0 || y >= previewCanvas.height) return;
 
-      // Get pixel from source canvas (not dimmed preview)
-      let srcCanvas = state.selectedView === 'combined' ? createCollageCanvas() : state.images.find(img => img.id === state.selectedView).canvas;
+      const srcCanvas = state.selectedView === 'combined' ? createCollageCanvas() : state.images.find(img => img.id === state.selectedView).canvas;
       const p = srcCanvas.getContext('2d').getImageData(x, y, 1, 1).data;
 
       if (p[3] === 0 && state.ignoreTransparent) {
-        showToast('Transparenter Pixel');
+        showToast('Transparenter Bereich');
         return;
       }
 
@@ -1281,7 +1516,6 @@
       toggleHighlight(hex);
     });
 
-    // File Input Handling
     const filePicker = document.getElementById('filePicker');
     document.getElementById('btnAddImages').onclick = () => filePicker.click();
 
@@ -1294,13 +1528,9 @@
       }
 
       filePicker.value = '';
-      if (state.images.length > 1) {
-        state.selectedView = 'combined';
-      } else if (state.images.length === 1) {
-        state.selectedView = state.images[0].id;
-      }
+      state.selectedView = state.images.length > 1 ? 'combined' : state.images[0].id;
       renderAll();
-      showToast(`${files.length} Bild(er) erfolgreich geladen`);
+      showToast(`${files.length} Bild(er) geladen`);
     });
 
     async function addImageFile(file) {
@@ -1337,23 +1567,22 @@
     function removeImage(id) {
       state.images = state.images.filter(img => img.id !== id);
       if (state.selectedView === id) {
-        state.selectedView = state.images.length > 0 ? 'combined' : 'combined';
+        state.selectedView = state.images.length > 1 ? 'combined' : (state.images[0]?.id || 'combined');
       }
       renderAll();
       showToast('Bild entfernt');
     }
 
     document.getElementById('btnResetProject').onclick = () => {
-      if (state.images.length === 0 || confirm('Möchtest du das aktuelle Projekt wirklich zurücksetzen?')) {
+      if (state.images.length === 0 || confirm('Aktuelles Projekt wirklich zurücksetzen?')) {
         state.images = [];
         state.activeHighlightHex = null;
         state.selectedView = 'combined';
         renderAll();
-        showToast('Neues Projekt gestartet');
+        showToast('Projekt zurückgesetzt');
       }
     };
 
-    // Scale & Liters live inputs
     const inputScale = document.getElementById('inputScale');
     const inputLiters = document.getElementById('inputLiters');
     const checkIgnoreTrans = document.getElementById('checkIgnoreTrans');
@@ -1364,26 +1593,26 @@
       document.getElementById('scaleLabel').textContent = `${state.scale} Px/m`;
       document.getElementById('kpiSqmSub').textContent = `${state.scale} Px = 1 m`;
       renderKPIsAndTable();
+      buildPrintReport();
     });
 
     inputLiters.addEventListener('input', () => {
       const val = parseFloat(inputLiters.value) || 0.15;
       state.litersPerSqm = Math.max(0.001, val);
-      document.getElementById('litersLabel').textContent = `${state.litersPerSqm.toFixed(3)} L/m²`;
-      document.getElementById('kpiLitersSub').textContent = `bei ${state.litersPerSqm.toFixed(3)} L/m²`;
+      document.getElementById('litersLabel').textContent = `${state.litersPerSqm.toFixed(3).replace('.', ',')} L/m²`;
+      document.getElementById('kpiLitersSub').textContent = `bei ${state.litersPerSqm.toFixed(3).replace('.', ',')} L/m²`;
       renderKPIsAndTable();
+      buildPrintReport();
     });
 
     checkIgnoreTrans.addEventListener('change', () => {
       state.ignoreTransparent = checkIgnoreTrans.checked;
-      // Re-analyze all images
       state.images.forEach(img => {
         img.analysis = analyzeCanvas(img.canvas, state.ignoreTransparent);
       });
       renderAll();
     });
 
-    // Preset Chips
     document.querySelectorAll('.chip[data-scale]').forEach(chip => {
       chip.onclick = () => {
         inputScale.value = chip.dataset.scale;
@@ -1399,10 +1628,8 @@
     });
 
     /* ====================================================================
-       5. EXPORTS (PNG LAYERS, ZIP, CSV, PRINT, PROJECT JSON)
+       6. EXPORTS (PNG LAYERS, ZIP, CSV, PRINT, PROJECT JSON)
        ==================================================================== */
-    
-    // Extract single color layer as transparent PNG
     function extractColorLayer(sourceCanvas, targetHex) {
       const w = sourceCanvas.width;
       const h = sourceCanvas.height;
@@ -1449,10 +1676,9 @@
       link.download = filename;
       link.href = layerCanvas.toDataURL('image/png');
       link.click();
-      showToast(`Ebene heruntergeladen: ${filename}`);
+      showToast(`PNG gespeichert: ${filename}`);
     }
 
-    // Pure JavaScript offline ZIP builder (zero external dependencies)
     class PureZip {
       constructor() {
         this.entries = [];
@@ -1491,13 +1717,12 @@
           const crc = crc32(entry.data);
           const size = entry.data.length;
 
-          // Local file header (30 bytes + name)
           const localHeader = new Uint8Array(30 + nameBytes.length);
           const lv = new DataView(localHeader.buffer);
           lv.setUint32(0, 0x04034b50, true);
           lv.setUint16(4, 20, true);
           lv.setUint16(6, 0, true);
-          lv.setUint16(8, 0, true); // stored (no compression)
+          lv.setUint16(8, 0, true);
           lv.setUint16(10, 0, true);
           lv.setUint16(12, 0, true);
           lv.setUint32(14, crc, true);
@@ -1509,7 +1734,6 @@
 
           fileHeaders.push(localHeader, entry.data);
 
-          // Central directory header (46 bytes + name)
           const centralHeader = new Uint8Array(46 + nameBytes.length);
           const cv = new DataView(centralHeader.buffer);
           cv.setUint32(0, 0x02014b50, true);
@@ -1539,7 +1763,6 @@
         let cdSize = 0;
         centralHeaders.forEach(ch => cdSize += ch.length);
 
-        // End of central directory record (22 bytes)
         const eocd = new Uint8Array(22);
         const ev = new DataView(eocd.buffer);
         ev.setUint32(0, 0x06054b50, true);
@@ -1555,14 +1778,13 @@
       }
     }
 
-    // Export all layers as ZIP
     document.getElementById('btnExportZip').onclick = async () => {
       if (state.images.length === 0) {
-        showToast('Bitte lade zuerst mindestens ein Bild');
+        showToast('Bitte lade zuerst ein Bild');
         return;
       }
 
-      showToast('Erstelle ZIP-Datei mit allen Ebenen...');
+      showToast('Erstelle ZIP-Datei...');
       const zip = new PureZip();
       const activeAnalysis = state.selectedView === 'combined' ? getCombinedAnalysis() : state.images.find(img => img.id === state.selectedView).analysis;
       const srcCanvas = state.selectedView === 'combined' ? createCollageCanvas() : state.images.find(img => img.id === state.selectedView).canvas;
@@ -1573,7 +1795,6 @@
         const safeRal = sanitizeFilename(c.ral);
         const filename = safeRal ? `${safeRal}.png` : `Farbe_${idx + 1}_${c.hex.replace('#','')}.png`;
 
-        // Canvas to Uint8Array
         const blob = await new Promise(res => layerCanvas.toBlob(res, 'image/png'));
         const arrBuf = await blob.arrayBuffer();
         zip.add(filename, new Uint8Array(arrBuf));
@@ -1582,26 +1803,24 @@
       const zipBlob = zip.buildBlob();
       const link = document.createElement('a');
       link.href = URL.createObjectURL(zipBlob);
-      link.download = `Farbebenen_Export_${new Date().toISOString().slice(0,10)}.zip`;
+      link.download = `Farbebenen_${new Date().toISOString().slice(0,10)}.zip`;
       link.click();
-      showToast('ZIP-Download erfolgreich gestartet!');
+      showToast('ZIP-Download gestartet!');
     };
 
-    // CSV Export
     document.getElementById('btnExportCsv').onclick = () => {
       if (state.images.length === 0) {
-        showToast('Keine Daten zum Exportieren vorhanden');
+        showToast('Bitte lade zuerst ein Bild');
         return;
       }
 
       const activeAnalysis = state.selectedView === 'combined' ? getCombinedAnalysis() : state.images.find(img => img.id === state.selectedView).analysis;
       const sqPixelsPerSqm = state.scale * state.scale;
 
-      let csv = "\uFEFF"; // UTF-8 BOM
-      csv += "sep=;\n";
+      let csv = "\uFEFFsep=;\n";
       csv += `Projekt:;${state.selectedView === 'combined' ? 'Gesamt-Projekt' : state.images.find(img => img.id === state.selectedView).name}\n`;
       csv += `Massstab (Pixel pro Meter):;${state.scale}\n`;
-      csv += `Verbrauch (Liter pro m2):;${state.litersPerSqm.toFixed(3)}\n`;
+      csv += `Verbrauch (Liter pro m2):;${state.litersPerSqm.toFixed(3).replace('.', ',')}\n`;
       csv += `Erstellt am:;${new Date().toLocaleString('de-DE')}\n\n`;
       csv += "Farbe;Hex;RAL-Ton;Pixel;Anteil_Prozent;Flaeche_m2;Farbmenge_Liter\n";
 
@@ -1618,22 +1837,23 @@
       link.href = URL.createObjectURL(blob);
       link.download = `Farbanalyse_${new Date().toISOString().slice(0,10)}.csv`;
       link.click();
-      showToast('CSV-Export heruntergeladen');
+      showToast('CSV heruntergeladen');
     };
 
-    // Print / PDF
     document.getElementById('btnPrint').onclick = () => {
       if (state.images.length === 0) {
         showToast('Bitte lade zuerst ein Bild');
         return;
       }
-      window.print();
+      buildPrintReport();
+      setTimeout(() => {
+        window.print();
+      }, 60);
     };
 
-    // Project Save / Load (.farbprojekt.json)
     document.getElementById('btnSaveProj').onclick = () => {
       if (state.images.length === 0) {
-        showToast('Kein aktives Projekt zum Speichern');
+        showToast('Kein Projekt zum Speichern');
         return;
       }
 
@@ -1654,7 +1874,7 @@
       link.href = URL.createObjectURL(blob);
       link.download = `Projekt_${new Date().toISOString().slice(0,10)}.farbprojekt.json`;
       link.click();
-      showToast('Projektdatei (.json) gespeichert');
+      showToast('Projekt gespeichert');
     };
 
     const loadProjInput = document.getElementById('loadProjInput');
@@ -1713,16 +1933,15 @@
 
           state.selectedView = state.images.length > 1 ? 'combined' : (state.images[0]?.id || 'combined');
           renderAll();
-          showToast('Projekt erfolgreich geladen');
+          showToast('Projekt geladen');
         } catch (err) {
-          alert('Fehler beim Laden der Projektdatei: ' + err.message);
+          alert('Fehler beim Laden: ' + err.message);
         }
       };
       reader.readAsText(file);
       loadProjInput.value = '';
     });
 
-    // PWA Info Modal
     const helpModal = document.getElementById('helpModal');
     document.getElementById('btnHelp').onclick = () => helpModal.classList.add('open');
     document.getElementById('btnCloseHelp').onclick = () => helpModal.classList.remove('open');
@@ -1730,7 +1949,6 @@
       if (e.target === helpModal) helpModal.classList.remove('open');
     };
 
-    // Helper functions
     function escapeHtml(str) {
       return (str || '').replace(/[&<>"']/g, (m) => ({
         '&': '&amp;',
@@ -1753,7 +1971,7 @@
     }
 
     /* ====================================================================
-       6. SERVICE WORKER REGISTRATION (OFFLINE SUPPORT)
+       7. SERVICE WORKER REGISTRATION (Bumped cache version to v2)
        ==================================================================== */
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -1763,7 +1981,6 @@
       });
     }
 
-    // Initial render
     renderAll();
   </script>
 </body>
