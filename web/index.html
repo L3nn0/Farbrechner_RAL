@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Farb- & Flächenrechner</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Farbrechner">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --amber: #f59e0b;
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 12px;
+      --touch-size: 44px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+      padding-bottom: 90px;
+    }
+
+    /* Header */
+    header {
+      background: #1e293b;
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: var(--touch-size);
+      padding: 0 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: white;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-sm {
+      height: 34px;
+      padding: 0 10px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+    }
+
+    .btn-primary { background: var(--primary); }
+    .btn-primary:active { background: var(--primary-hover); }
+    .btn-success { background: #059669; }
+    .btn-success:active { background: #047857; }
+    .btn-secondary { background: #334155; border-color: #475569; }
+    .btn-secondary:active { background: #475569; }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); }
+    .btn-danger:active { background: rgba(239, 68, 68, 0.4); }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #e2e8f0;
+    }
+
+    /* Settings Toolbar */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .input-field {
+      width: 100%;
+      height: var(--touch-size);
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      padding: 0 12px;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+    }
+
+    .quick-chips {
+      display: flex;
+      gap: 4px;
+    }
+
+    .chip {
+      height: var(--touch-size);
+      padding: 0 10px;
+      background: #334155;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip:active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Multi-Image Project Bar */
+    .project-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chips-scroller {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .project-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .project-chip.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--primary);
+      color: #93c5fd;
+      font-weight: 700;
+    }
+
+    .project-chip .chip-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+
+    .project-chip .close-chip {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 0 2px;
+    }
+
+    .project-chip .close-chip:hover {
+      color: var(--danger);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .kpi-card {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .kpi-sqm::before { background: var(--success); }
+    .kpi-liters::before { background: var(--primary); }
+    .kpi-colors::before { background: #8b5cf6; }
+    .kpi-pixels::before { background: var(--amber); }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .kpi-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Canvas / Preview */
+    .preview-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .canvas-container {
+      width: 100%;
+      max-height: 55vh;
+      overflow: auto;
+      border-radius: 8px;
+      background: repeating-conic-gradient(#1e293b 0% 25%, #0f172a 0% 50%) 50% / 16px 16px;
+      border: 1px solid var(--card-border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+      position: relative;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      image-rendering: pixelated;
+      cursor: crosshair;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .canvas-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .highlight-active-banner {
+      display: none;
+      width: 100%;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      color: #bfdbfe;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Color Table & List */
+    .color-card {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.15s;
+    }
+
+    .color-card.active-highlight {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+      background: #1e293b;
+    }
+
+    .color-header-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    .hex-badge {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ral-input {
+      flex: 1;
+      height: 38px;
+      background: #1e293b;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: #f8fafc;
+      padding: 0 10px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .ral-input:focus {
+      border-color: var(--primary);
+      background: #0f172a;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      font-size: 0.82rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .metric-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-label {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+    }
+
+    .metric-val {
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .color-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Fixed Bottom Action Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1e293b;
+      border-top: 1px solid var(--card-border);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      z-index: 100;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .bottom-bar-inner {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    /* Modals & Dialogs */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      border: 1px solid var(--primary);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      z-index: 300;
+      display: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* Empty state */
+    .empty-placeholder {
+      text-align: center;
+      padding: 40px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      border: 2px dashed var(--card-border);
+      border-radius: var(--radius);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+    }
+
+    /* PRINT STYLESHEET */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        padding-bottom: 0;
+      }
+
+      header, .bottom-bar, .settings-grid, .project-bar, .btn, .canvas-hint, .highlight-active-banner, #toast, .modal-overlay {
+        display: none !important;
+      }
+
+      .container {
+        padding: 0;
+        max-width: 100%;
+      }
+
+      .card {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        color: black !important;
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        margin-bottom: 15px;
+      }
+
+      .kpi-card {
+        background: white !important;
+        border: 1px solid #ccc !important;
+        color: black !important;
+      }
+
+      .kpi-val, .card-title, .metric-val, .hex-badge {
+        color: black !important;
+      }
+
+      .color-card {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        color: black !important;
+        page-break-inside: avoid;
+      }
+
+      .color-actions {
+        display: none !important;
+      }
+
+      .ral-input {
+        background: white !important;
+        color: black !important;
+        border: none !important;
+        font-weight: bold;
+      }
+
+      .canvas-container {
+        background: white !important;
+        border: none !important;
+      }
+
+      .print-header {
+        display: block !important;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+      }
+    }
+
+    .print-header {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Printable Header -->
+  <div class="print-header">
+    <h1 style="font-size: 1.6rem; font-weight: 800;">Farb- & Flächenberechnung – Projektbericht</h1>
+    <p id="printMeta" style="font-size: 0.9rem; color: #555; margin-top: 4px;"></p>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <img src="icon-192.png" alt="Icon" class="brand-icon">
+      <span>Farbrechner</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary btn-sm" id="btnHelp" title="PWA / Home-Bildschirm">📱 App-Info</button>
+      <button class="btn btn-secondary btn-sm" id="btnSaveProj" title="Projekt speichern">💾 Speichern</button>
+      <button class="btn btn-secondary btn-sm" id="btnLoadProj" title="Projekt laden">📂 Laden</button>
+      <input type="file" id="loadProjInput" accept=".json,.farbprojekt.json" style="display:none">
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Settings Card -->
+    <section class="card">
+      <div class="card-title">
+        <span>⚙️ Einstellungen & Skalierung</span>
+        <button class="btn btn-sm btn-secondary" id="btnResetProject" style="font-size:0.75rem">Neu starten</button>
+      </div>
+
+      <div class="settings-grid">
+        <div class="form-group">
+          <label class="form-label">
+            <span>Maßstab: Pixel pro Meter</span>
+            <span id="scaleLabel" style="color:var(--primary); font-weight:700;">100 Px/m</span>
+          </label>
+          <div class="input-row">
+            <input type="number" id="inputScale" class="input-field" value="100" min="1" step="1">
+            <div class="quick-chips">
+              <button class="chip" data-scale="50">50</button>
+              <button class="chip" data-scale="100">100</button>
+              <button class="chip" data-scale="200">200</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>Farbverbrauch (Liter / m²)</span>
+            <span id="litersLabel" style="color:var(--primary); font-weight:700;">0,150 L/m²</span>
+          </label>
+          <div class="input-row">
+            <input type="number" id="inputLiters" class="input-field" value="0.150" min="0.001" step="0.005">
+            <div class="quick-chips">
+              <button class="chip" data-liters="0.100">0.10</button>
+              <button class="chip" data-liters="0.150">0.15</button>
+              <button class="chip" data-liters="0.200">0.20</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted);">
+        <input type="checkbox" id="checkIgnoreTrans" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+        <label for="checkIgnoreTrans" style="cursor: pointer;">Vollständig transparente Pixel (Alpha = 0) ignorieren</label>
+      </div>
+    </section>
+
+    <!-- Multi-Image Project Management -->
+    <section class="card project-bar">
+      <div class="card-title">
+        <span>🖼️ Projektbilder</span>
+        <button class="btn btn-primary btn-sm" id="btnAddImages">
+          ➕ Bilder hinzufügen
+        </button>
+        <input type="file" id="filePicker" accept="image/*" multiple style="display:none">
+      </div>
+
+      <div class="chips-scroller" id="projectChips">
+        <!-- Rendered chips -->
+      </div>
+    </section>
+
+    <!-- KPI Summary Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card kpi-sqm">
+        <span class="kpi-label">Fläche Gesamt</span>
+        <span class="kpi-val" id="kpiSqm">0,00 m²</span>
+        <span class="kpi-sub" id="kpiSqmSub">100 Px = 1 m</span>
+      </div>
+
+      <div class="kpi-card kpi-liters">
+        <span class="kpi-label">Farbmenge Gesamt</span>
+        <span class="kpi-val" id="kpiLiters">0,000 L</span>
+        <span class="kpi-sub" id="kpiLitersSub">bei 0,150 L/m²</span>
+      </div>
+
+      <div class="kpi-card kpi-colors">
+        <span class="kpi-label">Farben</span>
+        <span class="kpi-val" id="kpiColors">0</span>
+        <span class="kpi-sub">Erkannte Töne</span>
+      </div>
+
+      <div class="kpi-card kpi-pixels">
+        <span class="kpi-label">Pixel gezählt</span>
+        <span class="kpi-val" id="kpiPixels">0</span>
+        <span class="kpi-sub" id="kpiRes">0 × 0 Px</span>
+      </div>
+    </section>
+
+    <!-- Canvas Preview -->
+    <section class="card preview-box" id="previewSection">
+      <div class="highlight-active-banner" id="highlightBanner">
+        <span id="highlightText">🎯 Hervorgehoben: #FFFFFF</span>
+        <button class="btn btn-sm btn-secondary" id="btnClearHighlight" style="height:28px; padding:0 8px;">✕ Beenden</button>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="previewCanvas"></canvas>
+      </div>
+      <div class="canvas-hint">
+        💡 <strong>Tipp:</strong> Tippe auf einen Bereich im Bild, um die Farbe direkt auszuwählen (Pipette).
+      </div>
+    </section>
+
+    <!-- Color Breakdown Cards -->
+    <section class="card">
+      <div class="card-title">
+        <span>🎨 Erkannte Farben & RAL-Zuordnung</span>
+        <span id="colorCountBadge" style="font-size:0.85rem; color:var(--text-muted);"></span>
+      </div>
+
+      <div id="colorsContainer">
+        <!-- Empty state or list of colors -->
+        <div class="empty-placeholder" id="emptyPlaceholder">
+          <div class="empty-icon">🖼️</div>
+          <div>
+            <strong>Noch kein Bild geladen</strong>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">
+              Füge ein oder mehrere Bilder hinzu, um die Farben und Quadratmeter exakt zu analysieren.
+            </p>
+          </div>
+          <button class="btn btn-primary" onclick="document.getElementById('filePicker').click()">
+            📷 Foto aufnehmen / Bild wählen
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sticky Bottom Action Bar -->
+  <footer class="bottom-bar">
+    <div class="bottom-bar-inner">
+      <button class="btn btn-secondary" id="btnExportCsv" style="flex:1;">
+        📊 CSV
+      </button>
+      <button class="btn btn-secondary" id="btnExportZip" style="flex:1;">
+        📦 Ebenen (ZIP)
+      </button>
+      <button class="btn btn-success" id="btnPrint" style="flex:1.2;">
+        🖨️ Drucken / PDF
+      </button>
+    </div>
+  </footer>
+
+  <!-- Help / PWA Modal -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+      <h3 style="margin-bottom:12px; font-size:1.15rem;">📱 Als Handy-App verwenden</h3>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:16px;">
+        Du kannst diesen Farbrechner wie eine native App ohne App-Store auf deinem Smartphone speichern:
+      </p>
+      
+      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:12px; font-size:0.88rem;">
+        <strong style="color:var(--primary);">🍏 iPhone / iPad (Safari):</strong>
+        <ol style="margin-left: 20px; margin-top: 6px;">
+          <li>Tippe unten auf das <strong>Teilen-Symbol (Viereck mit Pfeil nach oben)</strong>.</li>
+          <li>Scrolle etwas herunter und wähle <strong>„Zum Home-Bildschirm“</strong>.</li>
+          <li>Tippe oben rechts auf <strong>„Hinzufügen“</strong>.</li>
+        </ol>
+      </div>
+
+      <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:16px; font-size:0.88rem;">
+        <strong style="color:var(--success);">🤖 Android (Chrome / Edge):</strong>
+        <ol style="margin-left: 20px; margin-top: 6px;">
+          <li>Tippe oben rechts auf das <strong>Drei-Punkte-Menü (⋮)</strong>.</li>
+          <li>Wähle <strong>„App installieren“</strong> oder <strong>„Zum Startbildschirm hinzufügen“</strong>.</li>
+        </ol>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%" id="btnCloseHelp">Verstanden</button>
+    </div>
+  </div>
+
+  <!-- Toast Message -->
+  <div id="toast">Meldung</div>
+
+  <!-- Application Logic -->
+  <script>
+    /* ====================================================================
+       1. STORAGE & STATE MANAGEMENT
+       ==================================================================== */
+    const STORAGE_KEY_RAL = 'farbrechner_ral_mappings';
+    const STORAGE_KEY_SETTINGS = 'farbrechner_settings';
+
+    function loadRalMappings() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY_RAL)) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveRalMapping(hex, ralName) {
+      const mappings = loadRalMappings();
+      if (ralName && ralName.trim()) {
+        mappings[hex.toUpperCase()] = ralName.trim();
+      } else {
+        delete mappings[hex.toUpperCase()];
+      }
+      localStorage.setItem(STORAGE_KEY_RAL, JSON.stringify(mappings));
+    }
+
+    // App State
+    const state = {
+      scale: 100,            // Pixels per meter
+      litersPerSqm: 0.150,   // Liters per square meter
+      ignoreTransparent: true,
+      images: [],            // Array of { id, name, width, height, canvas, colors: [] }
+      selectedView: 'combined', // 'combined' or image id
+      activeHighlightHex: null // Currently highlighted hex color, or null
+    };
+
+    /* ====================================================================
+       2. COLOR & ANALYSIS UTILITIES
+       ==================================================================== */
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    function hexToRgb(hex) {
+      const clean = hex.replace('#', '');
+      const num = parseInt(clean, 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+      };
+    }
+
+    // Analyze a canvas element for exact color pixel counts
+    function analyzeCanvas(canvas, ignoreTransparent) {
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+
+      const colorMap = new Map(); // key: hex, val: { hex, rgb, count }
+      let transparentCount = 0;
+      let countedPixels = 0;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+
+        if (a === 0 && ignoreTransparent) {
+          transparentCount++;
+          continue;
+        }
+
+        const hex = rgbToHex(r, g, b);
+        let entry = colorMap.get(hex);
+        if (!entry) {
+          entry = { hex, rgb: { r, g, b }, count: 0 };
+          colorMap.set(hex, entry);
+        }
+        entry.count++;
+        countedPixels++;
+      }
+
+      const colors = Array.from(colorMap.values()).sort((a, b) => b.count - a.count);
+      const ralMappings = loadRalMappings();
+
+      return {
+        width: canvas.width,
+        height: canvas.height,
+        totalPixels: canvas.width * canvas.height,
+        countedPixels: countedPixels,
+        transparentPixels: transparentCount,
+        colors: colors.map(c => ({
+          ...c,
+          ral: ralMappings[c.hex] || ""
+        }))
+      };
+    }
+
+    // Aggregate colors across all images in the project
+    function getCombinedAnalysis() {
+      if (state.images.length === 0) {
+        return {
+          totalPixels: 0,
+          countedPixels: 0,
+          width: 0,
+          height: 0,
+          colors: []
+        };
+      }
+
+      const colorMap = new Map();
+      let totalCounted = 0;
+      let totalPixels = 0;
+
+      for (const img of state.images) {
+        totalPixels += img.analysis.totalPixels;
+        totalCounted += img.analysis.countedPixels;
+
+        for (const c of img.analysis.colors) {
+          let entry = colorMap.get(c.hex);
+          if (!entry) {
+            entry = { hex: c.hex, rgb: c.rgb, count: 0, ral: c.ral };
+            colorMap.set(c.hex, entry);
+          }
+          entry.count += c.count;
+          if (!entry.ral && c.ral) {
+            entry.ral = c.ral;
+          }
+        }
+      }
+
+      const colors = Array.from(colorMap.values()).sort((a, b) => b.count - a.count);
+      return {
+        totalPixels,
+        countedPixels: totalCounted,
+        colors
+      };
+    }
+
+    /* ====================================================================
+       3. UI RENDERING & PREVIEW
+       ==================================================================== */
+    const previewCanvas = document.getElementById('previewCanvas');
+    const previewCtx = previewCanvas.getContext('2d');
+    const colorsContainer = document.getElementById('colorsContainer');
+    const emptyPlaceholder = document.getElementById('emptyPlaceholder');
+    const projectChips = document.getElementById('projectChips');
+    const highlightBanner = document.getElementById('highlightBanner');
+    const highlightText = document.getElementById('highlightText');
+
+    function renderAll() {
+      renderProjectChips();
+      renderKPIsAndTable();
+      renderCanvas();
+    }
+
+    function renderProjectChips() {
+      projectChips.innerHTML = '';
+
+      if (state.images.length === 0) {
+        projectChips.style.display = 'none';
+        return;
+      }
+      projectChips.style.display = 'flex';
+
+      // Combined project chip
+      const combinedChip = document.createElement('div');
+      combinedChip.className = `project-chip ${state.selectedView === 'combined' ? 'active' : ''}`;
+      combinedChip.innerHTML = `<span>∑ Gesamt-Projekt (${state.images.length})</span>`;
+      combinedChip.onclick = () => {
+        state.selectedView = 'combined';
+        renderAll();
+      };
+      projectChips.appendChild(combinedChip);
+
+      // Single image chips
+      state.images.forEach((img, idx) => {
+        const chip = document.createElement('div');
+        chip.className = `project-chip ${state.selectedView === img.id ? 'active' : ''}`;
+        
+        // Create small thumbnail
+        const thumbCanvas = document.createElement('canvas');
+        thumbCanvas.width = 32;
+        thumbCanvas.height = 32;
+        const tCtx = thumbCanvas.getContext('2d');
+        tCtx.drawImage(img.canvas, 0, 0, 32, 32);
+
+        chip.innerHTML = `
+          <img src="${thumbCanvas.toDataURL()}" class="chip-thumb" alt="Thumb">
+          <span>${idx + 1}. ${escapeHtml(img.name)}</span>
+          <span class="close-chip" title="Bild entfernen">&times;</span>
+        `;
+
+        chip.querySelector('.close-chip').onclick = (e) => {
+          e.stopPropagation();
+          removeImage(img.id);
+        };
+
+        chip.onclick = () => {
+          state.selectedView = img.id;
+          renderAll();
+        };
+
+        projectChips.appendChild(chip);
+      });
+    }
+
+    function renderKPIsAndTable() {
+      const activeAnalysis = state.selectedView === 'combined' 
+        ? getCombinedAnalysis() 
+        : state.images.find(img => img.id === state.selectedView)?.analysis;
+
+      if (!activeAnalysis || state.images.length === 0) {
+        emptyPlaceholder.style.display = 'flex';
+        document.getElementById('previewSection').style.display = 'none';
+        document.getElementById('kpiSqm').textContent = '0,00 m²';
+        document.getElementById('kpiLiters').textContent = '0,000 L';
+        document.getElementById('kpiColors').textContent = '0';
+        document.getElementById('kpiPixels').textContent = '0';
+        document.getElementById('kpiRes').textContent = '0 × 0 Px';
+        document.getElementById('colorCountBadge').textContent = '';
+        return;
+      }
+
+      emptyPlaceholder.style.display = 'none';
+      document.getElementById('previewSection').style.display = 'flex';
+
+      const sqPixelsPerSqm = state.scale * state.scale;
+      const totalAreaSqm = activeAnalysis.countedPixels / sqPixelsPerSqm;
+      const totalLiters = totalAreaSqm * state.litersPerSqm;
+
+      // Update KPI Cards
+      document.getElementById('kpiSqm').textContent = totalAreaSqm.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' m²';
+      document.getElementById('kpiLiters').textContent = totalLiters.toLocaleString('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' L';
+      document.getElementById('kpiColors').textContent = activeAnalysis.colors.length;
+      document.getElementById('kpiPixels').textContent = activeAnalysis.countedPixels.toLocaleString('de-DE') + ' Px';
+
+      if (state.selectedView === 'combined') {
+        document.getElementById('kpiRes').textContent = `${state.images.length} Bilder summiert`;
+        document.getElementById('colorCountBadge').textContent = `Projekt-Zusammenfassung (${activeAnalysis.colors.length} Farben)`;
+      } else {
+        const curImg = state.images.find(img => img.id === state.selectedView);
+        document.getElementById('kpiRes').textContent = `${curImg.width} × ${curImg.height} Px`;
+        document.getElementById('colorCountBadge').textContent = `${curImg.name} (${activeAnalysis.colors.length} Farben)`;
+      }
+
+      // Update Print Metadata
+      document.getElementById('printMeta').textContent = 
+        `Erstellt am: ${new Date().toLocaleString('de-DE')} | Maßstab: ${state.scale} Px/m | Farbverbrauch: ${state.litersPerSqm.toFixed(3)} L/m² | Projekt: ${state.selectedView === 'combined' ? 'Gesamtprojekt' : state.images.find(img => img.id === state.selectedView).name}`;
+
+      // Render Color List / Cards
+      let html = '';
+      activeAnalysis.colors.forEach((c) => {
+        const percentage = activeAnalysis.countedPixels > 0 
+          ? (c.count / activeAnalysis.countedPixels * 100) 
+          : 0;
+        const sqm = c.count / sqPixelsPerSqm;
+        const liters = sqm * state.litersPerSqm;
+        const isActive = state.activeHighlightHex === c.hex;
+
+        html += `
+          <div class="color-card ${isActive ? 'active-highlight' : ''}" data-hex="${c.hex}" id="card-${c.hex.replace('#','')}">
+            <div class="color-header-row">
+              <div class="color-swatch" style="background-color: ${c.hex};" onclick="toggleHighlight('${c.hex}')" title="Klicken zum Hervorheben"></div>
+              <div class="hex-badge">
+                <span>${c.hex}</span>
+              </div>
+              <input type="text" class="ral-input" placeholder="RAL-Ton (z.B. 5002)..." value="${escapeHtml(c.ral || '')}" onchange="updateRal('${c.hex}', this.value)">
+            </div>
+
+            <div class="metrics-row">
+              <div class="metric-col">
+                <span class="metric-label">PIXEL / ANTEIL</span>
+                <span class="metric-val">${c.count.toLocaleString('de-DE')} Px <span style="font-size:0.75rem; color:var(--text-muted);">(${percentage.toFixed(1)}%)</span></span>
+              </div>
+              <div class="metric-col">
+                <span class="metric-label">FLÄCHE</span>
+                <span class="metric-val" style="color:var(--success);">${sqm.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m²</span>
+              </div>
+              <div class="metric-col">
+                <span class="metric-label">FARBMENGE</span>
+                <span class="metric-val" style="color:var(--primary);">${liters.toLocaleString('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} L</span>
+              </div>
+            </div>
+
+            <div class="color-actions">
+              <button class="btn btn-sm ${isActive ? 'btn-primary' : 'btn-secondary'}" style="flex:1;" onclick="toggleHighlight('${c.hex}')">
+                ${isActive ? '✓ Hervorgehoben' : '🎯 Hervorheben'}
+              </button>
+              <button class="btn btn-sm btn-secondary" onclick="downloadSingleLayer('${c.hex}', '${escapeHtml(c.ral || '')}')" title="Diese Farbe als transparentes PNG herunterladen">
+                💾 PNG
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      colorsContainer.innerHTML = html;
+    }
+
+    function renderCanvas() {
+      if (state.images.length === 0) return;
+
+      let sourceCanvas;
+      if (state.selectedView === 'combined') {
+        // Create a collage canvas of all images
+        sourceCanvas = createCollageCanvas();
+      } else {
+        const curImg = state.images.find(img => img.id === state.selectedView);
+        sourceCanvas = curImg.canvas;
+      }
+
+      if (!sourceCanvas) return;
+
+      previewCanvas.width = sourceCanvas.width;
+      previewCanvas.height = sourceCanvas.height;
+
+      if (!state.activeHighlightHex) {
+        // Normal draw
+        previewCtx.drawImage(sourceCanvas, 0, 0);
+        highlightBanner.style.display = 'none';
+      } else {
+        // Highlight active hex
+        highlightBanner.style.display = 'flex';
+        const ral = loadRalMappings()[state.activeHighlightHex] || '';
+        highlightText.innerHTML = `🎯 <strong>Hervorgehoben:</strong> <span style="display:inline-block; width:12px; height:12px; background:${state.activeHighlightHex}; border-radius:3px; vertical-align:middle;"></span> ${state.activeHighlightHex} ${ral ? '(' + escapeHtml(ral) + ')' : ''}`;
+
+        const srcCtx = sourceCanvas.getContext('2d');
+        const imgData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+        const data = imgData.data;
+
+        const targetRgb = hexToRgb(state.activeHighlightHex);
+
+        for (let i = 0; i < data.length; i += 4) {
+          const a = data[i + 3];
+          if (a === 0) continue;
+
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          if (r === targetRgb.r && g === targetRgb.g && b === targetRgb.b) {
+            // Keep full bright original color
+          } else {
+            // Dim non-matching pixels to 15% opacity
+            data[i + 3] = Math.max(25, Math.floor(a * 0.18));
+          }
+        }
+
+        previewCtx.putImageData(imgData, 0, 0);
+      }
+    }
+
+    function createCollageCanvas() {
+      const count = state.images.length;
+      if (count === 1) return state.images[0].canvas;
+
+      const cols = Math.ceil(Math.sqrt(count));
+      const rows = Math.ceil(count / cols);
+      const cellSize = 360;
+      const pad = 12;
+
+      const w = cols * cellSize + (cols + 1) * pad;
+      const h = rows * cellSize + (rows + 1) * pad;
+
+      const coll = document.createElement('canvas');
+      coll.width = w;
+      coll.height = h;
+      const ctx = coll.getContext('2d');
+
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(0, 0, w, h);
+
+      state.images.forEach((img, idx) => {
+        const r_idx = Math.floor(idx / cols);
+        const c_idx = idx % cols;
+
+        const maxInner = cellSize - 8;
+        const scale = Math.min(maxInner / img.width, maxInner / img.height);
+        const tw = img.width * scale;
+        const th = img.height * scale;
+
+        const x0 = pad + c_idx * (cellSize + pad) + (cellSize - tw) / 2;
+        const y0 = pad + r_idx * (cellSize + pad) + (cellSize - th) / 2;
+
+        ctx.drawImage(img.canvas, x0, y0, tw, th);
+      });
+
+      return coll;
+    }
+
+    /* ====================================================================
+       4. INTERACTION & EVENT HANDLERS
+       ==================================================================== */
+    function toggleHighlight(hex) {
+      if (state.activeHighlightHex === hex) {
+        state.activeHighlightHex = null;
+      } else {
+        state.activeHighlightHex = hex;
+        showToast(`Hervorgehoben: ${hex}`);
+        // Scroll card into view
+        const card = document.getElementById('card-' + hex.replace('#', ''));
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      renderAll();
+    }
+
+    document.getElementById('btnClearHighlight').onclick = () => {
+      state.activeHighlightHex = null;
+      renderAll();
+    };
+
+    function updateRal(hex, ralName) {
+      saveRalMapping(hex, ralName);
+      // Update in loaded analysis
+      state.images.forEach(img => {
+        img.analysis.colors.forEach(c => {
+          if (c.hex === hex) c.ral = ralName.trim();
+        });
+      });
+      showToast(`RAL gespeichert: ${hex} → ${ralName || 'Kein'}`);
+      renderAll();
+    }
+
+    // Touch / Click pipette on canvas
+    previewCanvas.addEventListener('click', (e) => {
+      if (state.images.length === 0) return;
+
+      const rect = previewCanvas.getBoundingClientRect();
+      const scaleX = previewCanvas.width / rect.width;
+      const scaleY = previewCanvas.height / rect.height;
+
+      const x = Math.floor((e.clientX - rect.left) * scaleX);
+      const y = Math.floor((e.clientY - rect.top) * scaleY);
+
+      if (x < 0 || x >= previewCanvas.width || y < 0 || y >= previewCanvas.height) return;
+
+      // Get pixel from source canvas (not dimmed preview)
+      let srcCanvas = state.selectedView === 'combined' ? createCollageCanvas() : state.images.find(img => img.id === state.selectedView).canvas;
+      const p = srcCanvas.getContext('2d').getImageData(x, y, 1, 1).data;
+
+      if (p[3] === 0 && state.ignoreTransparent) {
+        showToast('Transparenter Pixel');
+        return;
+      }
+
+      const hex = rgbToHex(p[0], p[1], p[2]);
+      toggleHighlight(hex);
+    });
+
+    // File Input Handling
+    const filePicker = document.getElementById('filePicker');
+    document.getElementById('btnAddImages').onclick = () => filePicker.click();
+
+    filePicker.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      for (const file of files) {
+        await addImageFile(file);
+      }
+
+      filePicker.value = '';
+      if (state.images.length > 1) {
+        state.selectedView = 'combined';
+      } else if (state.images.length === 1) {
+        state.selectedView = state.images[0].id;
+      }
+      renderAll();
+      showToast(`${files.length} Bild(er) erfolgreich geladen`);
+    });
+
+    async function addImageFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            const analysis = analyzeCanvas(canvas, state.ignoreTransparent);
+
+            state.images.push({
+              id: 'img_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+              name: file.name,
+              width: img.width,
+              height: img.height,
+              canvas: canvas,
+              analysis: analysis
+            });
+
+            resolve();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function removeImage(id) {
+      state.images = state.images.filter(img => img.id !== id);
+      if (state.selectedView === id) {
+        state.selectedView = state.images.length > 0 ? 'combined' : 'combined';
+      }
+      renderAll();
+      showToast('Bild entfernt');
+    }
+
+    document.getElementById('btnResetProject').onclick = () => {
+      if (state.images.length === 0 || confirm('Möchtest du das aktuelle Projekt wirklich zurücksetzen?')) {
+        state.images = [];
+        state.activeHighlightHex = null;
+        state.selectedView = 'combined';
+        renderAll();
+        showToast('Neues Projekt gestartet');
+      }
+    };
+
+    // Scale & Liters live inputs
+    const inputScale = document.getElementById('inputScale');
+    const inputLiters = document.getElementById('inputLiters');
+    const checkIgnoreTrans = document.getElementById('checkIgnoreTrans');
+
+    inputScale.addEventListener('input', () => {
+      const val = parseFloat(inputScale.value) || 100;
+      state.scale = Math.max(1, val);
+      document.getElementById('scaleLabel').textContent = `${state.scale} Px/m`;
+      document.getElementById('kpiSqmSub').textContent = `${state.scale} Px = 1 m`;
+      renderKPIsAndTable();
+    });
+
+    inputLiters.addEventListener('input', () => {
+      const val = parseFloat(inputLiters.value) || 0.15;
+      state.litersPerSqm = Math.max(0.001, val);
+      document.getElementById('litersLabel').textContent = `${state.litersPerSqm.toFixed(3)} L/m²`;
+      document.getElementById('kpiLitersSub').textContent = `bei ${state.litersPerSqm.toFixed(3)} L/m²`;
+      renderKPIsAndTable();
+    });
+
+    checkIgnoreTrans.addEventListener('change', () => {
+      state.ignoreTransparent = checkIgnoreTrans.checked;
+      // Re-analyze all images
+      state.images.forEach(img => {
+        img.analysis = analyzeCanvas(img.canvas, state.ignoreTransparent);
+      });
+      renderAll();
+    });
+
+    // Preset Chips
+    document.querySelectorAll('.chip[data-scale]').forEach(chip => {
+      chip.onclick = () => {
+        inputScale.value = chip.dataset.scale;
+        inputScale.dispatchEvent(new Event('input'));
+      };
+    });
+
+    document.querySelectorAll('.chip[data-liters]').forEach(chip => {
+      chip.onclick = () => {
+        inputLiters.value = chip.dataset.liters;
+        inputLiters.dispatchEvent(new Event('input'));
+      };
+    });
+
+    /* ====================================================================
+       5. EXPORTS (PNG LAYERS, ZIP, CSV, PRINT, PROJECT JSON)
+       ==================================================================== */
+    
+    // Extract single color layer as transparent PNG
+    function extractColorLayer(sourceCanvas, targetHex) {
+      const w = sourceCanvas.width;
+      const h = sourceCanvas.height;
+      const srcCtx = sourceCanvas.getContext('2d');
+      const imgData = srcCtx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = w;
+      outCanvas.height = h;
+      const outCtx = outCanvas.getContext('2d');
+      const outImgData = outCtx.createImageData(w, h);
+      const outData = outImgData.data;
+
+      const target = hexToRgb(targetHex);
+
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] === 0) continue;
+        if (data[i] === target.r && data[i + 1] === target.g && data[i + 2] === target.b) {
+          outData[i] = target.r;
+          outData[i + 1] = target.g;
+          outData[i + 2] = target.b;
+          outData[i + 3] = data[i + 3];
+        }
+      }
+
+      outCtx.putImageData(outImgData, 0, 0);
+      return outCanvas;
+    }
+
+    function sanitizeFilename(name) {
+      return (name || '').replace(/[/\\?%*:|"<>]/g, '_').trim();
+    }
+
+    function downloadSingleLayer(hex, ralName) {
+      if (state.images.length === 0) return;
+      const srcCanvas = state.selectedView === 'combined' ? createCollageCanvas() : state.images.find(img => img.id === state.selectedView).canvas;
+      const layerCanvas = extractColorLayer(srcCanvas, hex);
+
+      const safeRal = sanitizeFilename(ralName);
+      const filename = safeRal ? `${safeRal}.png` : `Farbe_${hex.replace('#','')}.png`;
+
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = layerCanvas.toDataURL('image/png');
+      link.click();
+      showToast(`Ebene heruntergeladen: ${filename}`);
+    }
+
+    // Pure JavaScript offline ZIP builder (zero external dependencies)
+    class PureZip {
+      constructor() {
+        this.entries = [];
+      }
+      add(name, uint8Array) {
+        this.entries.push({ name, data: uint8Array });
+      }
+      buildBlob() {
+        const crcTable = (() => {
+          let c;
+          const table = new Uint32Array(256);
+          for (let n = 0; n < 256; n++) {
+            c = n;
+            for (let k = 0; k < 8; k++) {
+              c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+            }
+            table[n] = c >>> 0;
+          }
+          return table;
+        })();
+
+        const crc32 = (buf) => {
+          let crc = 0 ^ (-1);
+          for (let i = 0; i < buf.length; i++) {
+            crc = (crc >>> 8) ^ crcTable[(crc ^ buf[i]) & 0xFF];
+          }
+          return (crc ^ (-1)) >>> 0;
+        };
+
+        const fileHeaders = [];
+        const centralHeaders = [];
+        let offset = 0;
+
+        for (const entry of this.entries) {
+          const nameBytes = new TextEncoder().encode(entry.name);
+          const crc = crc32(entry.data);
+          const size = entry.data.length;
+
+          // Local file header (30 bytes + name)
+          const localHeader = new Uint8Array(30 + nameBytes.length);
+          const lv = new DataView(localHeader.buffer);
+          lv.setUint32(0, 0x04034b50, true);
+          lv.setUint16(4, 20, true);
+          lv.setUint16(6, 0, true);
+          lv.setUint16(8, 0, true); // stored (no compression)
+          lv.setUint16(10, 0, true);
+          lv.setUint16(12, 0, true);
+          lv.setUint32(14, crc, true);
+          lv.setUint32(18, size, true);
+          lv.setUint32(22, size, true);
+          lv.setUint16(26, nameBytes.length, true);
+          lv.setUint16(28, 0, true);
+          localHeader.set(nameBytes, 30);
+
+          fileHeaders.push(localHeader, entry.data);
+
+          // Central directory header (46 bytes + name)
+          const centralHeader = new Uint8Array(46 + nameBytes.length);
+          const cv = new DataView(centralHeader.buffer);
+          cv.setUint32(0, 0x02014b50, true);
+          cv.setUint16(4, 20, true);
+          cv.setUint16(6, 20, true);
+          cv.setUint16(8, 0, true);
+          cv.setUint16(10, 0, true);
+          cv.setUint16(12, 0, true);
+          cv.setUint16(14, 0, true);
+          cv.setUint32(16, crc, true);
+          cv.setUint32(20, size, true);
+          cv.setUint32(24, size, true);
+          cv.setUint16(28, nameBytes.length, true);
+          cv.setUint16(30, 0, true);
+          cv.setUint16(32, 0, true);
+          cv.setUint16(34, 0, true);
+          cv.setUint16(36, 0, true);
+          cv.setUint32(38, 0, true);
+          cv.setUint32(42, offset, true);
+          centralHeader.set(nameBytes, 46);
+
+          centralHeaders.push(centralHeader);
+          offset += localHeader.length + size;
+        }
+
+        const cdOffset = offset;
+        let cdSize = 0;
+        centralHeaders.forEach(ch => cdSize += ch.length);
+
+        // End of central directory record (22 bytes)
+        const eocd = new Uint8Array(22);
+        const ev = new DataView(eocd.buffer);
+        ev.setUint32(0, 0x06054b50, true);
+        ev.setUint16(4, 0, true);
+        ev.setUint16(6, 0, true);
+        ev.setUint16(8, this.entries.length, true);
+        ev.setUint16(10, this.entries.length, true);
+        ev.setUint32(12, cdSize, true);
+        ev.setUint32(16, cdOffset, true);
+        ev.setUint16(20, 0, true);
+
+        return new Blob([...fileHeaders, ...centralHeaders, eocd], { type: 'application/zip' });
+      }
+    }
+
+    // Export all layers as ZIP
+    document.getElementById('btnExportZip').onclick = async () => {
+      if (state.images.length === 0) {
+        showToast('Bitte lade zuerst mindestens ein Bild');
+        return;
+      }
+
+      showToast('Erstelle ZIP-Datei mit allen Ebenen...');
+      const zip = new PureZip();
+      const activeAnalysis = state.selectedView === 'combined' ? getCombinedAnalysis() : state.images.find(img => img.id === state.selectedView).analysis;
+      const srcCanvas = state.selectedView === 'combined' ? createCollageCanvas() : state.images.find(img => img.id === state.selectedView).canvas;
+
+      for (let idx = 0; idx < activeAnalysis.colors.length; idx++) {
+        const c = activeAnalysis.colors[idx];
+        const layerCanvas = extractColorLayer(srcCanvas, c.hex);
+        const safeRal = sanitizeFilename(c.ral);
+        const filename = safeRal ? `${safeRal}.png` : `Farbe_${idx + 1}_${c.hex.replace('#','')}.png`;
+
+        // Canvas to Uint8Array
+        const blob = await new Promise(res => layerCanvas.toBlob(res, 'image/png'));
+        const arrBuf = await blob.arrayBuffer();
+        zip.add(filename, new Uint8Array(arrBuf));
+      }
+
+      const zipBlob = zip.buildBlob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = `Farbebenen_Export_${new Date().toISOString().slice(0,10)}.zip`;
+      link.click();
+      showToast('ZIP-Download erfolgreich gestartet!');
+    };
+
+    // CSV Export
+    document.getElementById('btnExportCsv').onclick = () => {
+      if (state.images.length === 0) {
+        showToast('Keine Daten zum Exportieren vorhanden');
+        return;
+      }
+
+      const activeAnalysis = state.selectedView === 'combined' ? getCombinedAnalysis() : state.images.find(img => img.id === state.selectedView).analysis;
+      const sqPixelsPerSqm = state.scale * state.scale;
+
+      let csv = "\uFEFF"; // UTF-8 BOM
+      csv += "sep=;\n";
+      csv += `Projekt:;${state.selectedView === 'combined' ? 'Gesamt-Projekt' : state.images.find(img => img.id === state.selectedView).name}\n`;
+      csv += `Massstab (Pixel pro Meter):;${state.scale}\n`;
+      csv += `Verbrauch (Liter pro m2):;${state.litersPerSqm.toFixed(3)}\n`;
+      csv += `Erstellt am:;${new Date().toLocaleString('de-DE')}\n\n`;
+      csv += "Farbe;Hex;RAL-Ton;Pixel;Anteil_Prozent;Flaeche_m2;Farbmenge_Liter\n";
+
+      activeAnalysis.colors.forEach((c) => {
+        const percentage = activeAnalysis.countedPixels > 0 ? (c.count / activeAnalysis.countedPixels * 100) : 0;
+        const sqm = c.count / sqPixelsPerSqm;
+        const liters = sqm * state.litersPerSqm;
+
+        csv += `"${c.hex}";"${c.hex}";"${c.ral || ''}";${c.count};${percentage.toFixed(2).replace('.', ',')};${sqm.toFixed(4).replace('.', ',')};${liters.toFixed(4).replace('.', ',')}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Farbanalyse_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+      showToast('CSV-Export heruntergeladen');
+    };
+
+    // Print / PDF
+    document.getElementById('btnPrint').onclick = () => {
+      if (state.images.length === 0) {
+        showToast('Bitte lade zuerst ein Bild');
+        return;
+      }
+      window.print();
+    };
+
+    // Project Save / Load (.farbprojekt.json)
+    document.getElementById('btnSaveProj').onclick = () => {
+      if (state.images.length === 0) {
+        showToast('Kein aktives Projekt zum Speichern');
+        return;
+      }
+
+      const payload = {
+        project_name: "Farbrechner-Projekt",
+        pixels_per_meter: state.scale,
+        liters_per_sqm: state.litersPerSqm,
+        ignore_transparent: state.ignoreTransparent,
+        ral_mappings: loadRalMappings(),
+        images: state.images.map(img => ({
+          name: img.name,
+          dataUrl: img.canvas.toDataURL('image/png')
+        }))
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Projekt_${new Date().toISOString().slice(0,10)}.farbprojekt.json`;
+      link.click();
+      showToast('Projektdatei (.json) gespeichert');
+    };
+
+    const loadProjInput = document.getElementById('loadProjInput');
+    document.getElementById('btnLoadProj').onclick = () => loadProjInput.click();
+
+    loadProjInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (data.pixels_per_meter) {
+            state.scale = data.pixels_per_meter;
+            inputScale.value = state.scale;
+            inputScale.dispatchEvent(new Event('input'));
+          }
+          if (data.liters_per_sqm) {
+            state.litersPerSqm = data.liters_per_sqm;
+            inputLiters.value = state.litersPerSqm;
+            inputLiters.dispatchEvent(new Event('input'));
+          }
+          if (data.ral_mappings) {
+            const currentRals = loadRalMappings();
+            Object.assign(currentRals, data.ral_mappings);
+            localStorage.setItem(STORAGE_KEY_RAL, JSON.stringify(currentRals));
+          }
+
+          if (data.images && data.images.length > 0) {
+            state.images = [];
+            for (const imgData of data.images) {
+              await new Promise(resolve => {
+                const img = new Image();
+                img.onload = () => {
+                  const canvas = document.createElement('canvas');
+                  canvas.width = img.width;
+                  canvas.height = img.height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0);
+                  const analysis = analyzeCanvas(canvas, state.ignoreTransparent);
+                  state.images.push({
+                    id: 'img_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                    name: imgData.name,
+                    width: img.width,
+                    height: img.height,
+                    canvas: canvas,
+                    analysis: analysis
+                  });
+                  resolve();
+                };
+                img.src = imgData.dataUrl;
+              });
+            }
+          }
+
+          state.selectedView = state.images.length > 1 ? 'combined' : (state.images[0]?.id || 'combined');
+          renderAll();
+          showToast('Projekt erfolgreich geladen');
+        } catch (err) {
+          alert('Fehler beim Laden der Projektdatei: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      loadProjInput.value = '';
+    });
+
+    // PWA Info Modal
+    const helpModal = document.getElementById('helpModal');
+    document.getElementById('btnHelp').onclick = () => helpModal.classList.add('open');
+    document.getElementById('btnCloseHelp').onclick = () => helpModal.classList.remove('open');
+    helpModal.onclick = (e) => {
+      if (e.target === helpModal) helpModal.classList.remove('open');
+    };
+
+    // Helper functions
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[m]));
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    /* ====================================================================
+       6. SERVICE WORKER REGISTRATION (OFFLINE SUPPORT)
+       ==================================================================== */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('ServiceWorker registriert:', reg.scope))
+          .catch(err => console.log('ServiceWorker fehlgeschlagen:', err));
+      });
+    }
+
+    // Initial render
+    renderAll();
+  </script>
+</body>
+</html>
